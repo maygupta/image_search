@@ -1,5 +1,6 @@
 package com.groupon.maygupta.imagesearch.activities;
 
+import android.app.FragmentManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
@@ -15,6 +16,8 @@ import android.widget.GridView;
 import com.groupon.maygupta.imagesearch.R;
 import com.groupon.maygupta.imagesearch.adapters.ImagesAdapter;
 import com.groupon.maygupta.imagesearch.clients.GoogleApiClient;
+import com.groupon.maygupta.imagesearch.fragments.SearchFilterFragment;
+import com.groupon.maygupta.imagesearch.models.FilterParams;
 import com.groupon.maygupta.imagesearch.models.Image;
 import com.groupon.maygupta.imagesearch.utils.EndlessScrollListener;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -33,6 +36,7 @@ public class ImagesListActivity extends ActionBarActivity {
     private GoogleApiClient client;
     private ImagesAdapter adapter;
     private GridView gvImages;
+    private FilterParams filterParams;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +53,9 @@ public class ImagesListActivity extends ActionBarActivity {
         // Create adapter for images and bind it with view
         adapter = new ImagesAdapter(this, images);
         gvImages.setAdapter(adapter);
+
+        // Initiate Filter params
+        filterParams = new FilterParams();
     }
 
     public void setupViews() {
@@ -123,6 +130,7 @@ public class ImagesListActivity extends ActionBarActivity {
 
     public void fetchImages(String query) {
         client.query = query;
+        client.filterParams = filterParams;
         client.getImages(new JsonHttpResponseHandler(){
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
@@ -151,9 +159,22 @@ public class ImagesListActivity extends ActionBarActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        if ( id == R.id.filter_settings) {
+            FragmentManager manager = getFragmentManager();
+            SearchFilterFragment fragment = new SearchFilterFragment();
+            Bundle args = new Bundle();
+            args.putString("color", filterParams.color);
+            args.putString("size", filterParams.size);
+            args.putString("type", filterParams.type);
+            args.putString("domain", filterParams.domain);
+            fragment.setArguments(args);
+            fragment.setDialogResultHandler(new SearchFilterFragment.OnDialogResultHandler() {
+                @Override
+                public void finish(FilterParams filterParamsFromDialog) {
+                    filterParams = filterParamsFromDialog;
+                }
+            });
+            fragment.show(manager, "FilterDialog");
         }
 
         return super.onOptionsItemSelected(item);
