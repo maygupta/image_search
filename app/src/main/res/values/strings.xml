@@ -32,11 +32,13 @@
 
     <string-array name="filter_types">
         <item>any</item>
-        <item>jpg</item>
-        <item>png</item>
-        <item>gif</item>
-        <item>bmp</item>
+        <item>face</item>
+        <item>photo</item>
+        <item>clipart</item>
+        <item>lineart</item>
     </string-array>
+
+    <color name="light_grey">#33CCCC</color>
 
     <string-array name="filter_sizes">
         <item>any</item>

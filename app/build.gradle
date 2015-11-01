@@ -31,4 +31,5 @@ dependencies {
     // Loading remote images from network into image view
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.etsy.android.grid:library:1.0.5'
+    compile 'com.android.support:recyclerview-v7:23.0.0'
 }

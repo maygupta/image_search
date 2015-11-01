@@ -1,7 +1,10 @@
 package com.groupon.maygupta.imagesearch.activities;
 
 import android.app.FragmentManager;
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBarActivity;
@@ -11,8 +14,9 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.GridView;
+import android.widget.Toast;
 
+import com.etsy.android.grid.StaggeredGridView;
 import com.groupon.maygupta.imagesearch.R;
 import com.groupon.maygupta.imagesearch.adapters.ImagesAdapter;
 import com.groupon.maygupta.imagesearch.clients.GoogleApiClient;
@@ -35,7 +39,8 @@ public class ImagesListActivity extends ActionBarActivity {
     private ArrayList<Image> images;
     private GoogleApiClient client;
     private ImagesAdapter adapter;
-    private GridView gvImages;
+//    private GridView gvImages;
+    private StaggeredGridView gvImages;
     private FilterParams filterParams;
 
     @Override
@@ -46,6 +51,7 @@ public class ImagesListActivity extends ActionBarActivity {
         // Create client object for Google API
         client = new GoogleApiClient();
 
+        // Setup views and listener events on the views
         setupViews();
 
         images = new ArrayList<>();
@@ -59,7 +65,8 @@ public class ImagesListActivity extends ActionBarActivity {
     }
 
     public void setupViews() {
-        gvImages = (GridView) findViewById(R.id.gvImages);
+//        gvImages = (GridView) findViewById(R.id.gvImages);
+        gvImages = (StaggeredGridView) findViewById(R.id.grid_view);
 
         gvImages.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -129,9 +136,15 @@ public class ImagesListActivity extends ActionBarActivity {
     }
 
     public void fetchImages(String query) {
+
+        if (isNetworkAvailable() == false) {
+            Toast.makeText(this, "Network not available!!", Toast.LENGTH_LONG);
+            return;
+        }
+
         client.query = query;
         client.filterParams = filterParams;
-        client.getImages(new JsonHttpResponseHandler(){
+        client.getImages(new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 JSONArray resultsJson = null;
@@ -178,5 +191,12 @@ public class ImagesListActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private Boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnectedOrConnecting();
     }
 }

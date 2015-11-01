@@ -2,6 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/light_grey"
     android:weightSum="1">
 
 
@@ -95,23 +96,40 @@
         android:layout_alignLeft="@+id/etType"
         android:layout_alignStart="@+id/etType" />
 
-    <Button
-        android:layout_width="wrap_content"
+    <RelativeLayout
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="@string/save"
-        android:id="@+id/save"
-        android:layout_marginTop="71dp"
-        android:layout_marginLeft="60dp"
-        android:layout_below="@+id/etDomain" />
+        android:layout_marginBottom="10dp"
+        >
+
+    </RelativeLayout>
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/cancel"
+        android:id="@+id/save"
+        android:text="Save"
+        android:textSize="8sp"
+        android:layout_marginBottom="40dp"
+        android:drawableBottom="@drawable/save"
+        android:background="#00ffffff"
+        android:layout_below="@+id/etDomain"
+        android:layout_alignParentLeft="true"
+        android:layout_toStartOf="@+id/cancel"
+        android:layout_alignRight="@+id/tvType"
+        android:layout_alignEnd="@+id/tvType" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:drawableBottom="@drawable/cancel"
         android:id="@+id/cancel"
+        android:text="Cancel"
+        android:textSize="8sp"
+        android:background="#00ffffff"
         android:layout_alignTop="@+id/save"
-        android:layout_toRightOf="@+id/save"
-        android:layout_toEndOf="@+id/save" />
+         />
 
 
 </RelativeLayout>

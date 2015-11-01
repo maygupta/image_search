@@ -39,7 +39,7 @@ public class GoogleApiClient {
             }
 
             if ( filterParams.type != null) {
-                url += "&as_filetype=" + filterParams.type;
+                url += "&imgtype=" + filterParams.type;
             }
 
             if ( filterParams.domain != null) {

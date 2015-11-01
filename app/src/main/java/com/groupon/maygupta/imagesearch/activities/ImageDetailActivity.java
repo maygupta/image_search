@@ -44,7 +44,7 @@ public class ImageDetailActivity extends ActionBarActivity {
 
             @Override
             public void onError() {
-
+                // TODO
             }
         });
 
@@ -88,7 +88,9 @@ public class ImageDetailActivity extends ActionBarActivity {
         shareIntent.putExtra(Intent.EXTRA_STREAM, bmpUri);
         shareIntent.setType("image/*");
         // Attach share event to the menu item provider
-        miShareAction.setShareIntent(shareIntent);
+        if (miShareAction != null) {
+            miShareAction.setShareIntent(shareIntent);
+        }
     }
 
     // Returns the URI path to the Bitmap displayed in specified ImageView
@@ -110,7 +112,6 @@ public class ImageDetailActivity extends ActionBarActivity {
 
         try {
             File file =  new File(Environment.getExternalStoragePublicDirectory(
-
                     Environment.DIRECTORY_DOWNLOADS), "share_image_" + System.currentTimeMillis() + ".png");
             file.getParentFile().mkdirs();
             FileOutputStream out = new FileOutputStream(file);
