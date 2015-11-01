@@ -66,6 +66,7 @@ public class SearchFilterFragment extends DialogFragment {
         view = inflater.inflate(R.layout.filter_dialog, null);
         populateFilter();
         view.findViewById(R.id.save).setOnClickListener(new SaveListener());
+        view.findViewById(R.id.cancel).setOnClickListener(new CancelListener());
 
         return view;
     }
@@ -111,6 +112,13 @@ public class SearchFilterFragment extends DialogFragment {
         @Override
         public void onClick(View v) {
             dialogResultHandler.finish(getFilterParams());
+            SearchFilterFragment.this.dismiss();
+        }
+    }
+
+    private class CancelListener implements android.view.View.OnClickListener {
+        @Override
+        public void onClick(View v) {
             SearchFilterFragment.this.dismiss();
         }
     }
