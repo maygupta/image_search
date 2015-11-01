@@ -1,18 +1,22 @@
 package com.groupon.maygupta.imagesearch.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.GridView;
 
 import com.groupon.maygupta.imagesearch.R;
 import com.groupon.maygupta.imagesearch.adapters.ImagesAdapter;
 import com.groupon.maygupta.imagesearch.clients.GoogleApiClient;
 import com.groupon.maygupta.imagesearch.models.Image;
+import com.groupon.maygupta.imagesearch.utils.EndlessScrollListener;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
 import org.json.JSONArray;
@@ -23,7 +27,7 @@ import java.util.ArrayList;
 
 import cz.msebera.android.httpclient.Header;
 
-public class ImagesListActivity extends AppCompatActivity {
+public class ImagesListActivity extends ActionBarActivity {
 
     private ArrayList<Image> images;
     private GoogleApiClient client;
@@ -38,14 +42,57 @@ public class ImagesListActivity extends AppCompatActivity {
         // Create client object for Google API
         client = new GoogleApiClient();
 
-        // Create array to store images
+        setupViews();
+
         images = new ArrayList<>();
 
-        // Create adapter for images
+        // Create adapter for images and bind it with view
         adapter = new ImagesAdapter(this, images);
-
-        gvImages = (GridView) findViewById(R.id.gvImages);
         gvImages.setAdapter(adapter);
+    }
+
+    public void setupViews() {
+        gvImages = (GridView) findViewById(R.id.gvImages);
+
+        gvImages.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                // Launch image detail activity
+                Intent intent = new Intent(ImagesListActivity.this, ImageDetailActivity.class);
+                Image image = images.get(position);
+                intent.putExtra("image", image);
+                startActivity(intent);
+            }
+        });
+
+        gvImages.setOnScrollListener(new EndlessScrollListener() {
+            @Override
+            public boolean onLoadMore(int page, int totalItemsCount) {
+                customLoadMoreDataFromApi(page);
+                return true;
+            }
+        });
+    }
+
+    // Append more data into the adapter
+    public void customLoadMoreDataFromApi(int offset) {
+        // This method probably sends out a network request and appends new data items to your adapter.
+        // Use the offset value and add it as a parameter to your API request to retrieve paginated data.
+        // Deserialize API response and then construct new objects to append to the adapter
+        client.page = offset;
+        client.getImages(new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                JSONArray resultsJson = null;
+                try {
+                    resultsJson = response.getJSONObject("responseData").getJSONArray("results");
+                    adapter.addAll(Image.fromJSONArray(resultsJson));
+                    adapter.notifyDataSetChanged();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     @Override
@@ -75,15 +122,15 @@ public class ImagesListActivity extends AppCompatActivity {
     }
 
     public void fetchImages(String query) {
-
-        client.getImages(query, new JsonHttpResponseHandler(){
+        client.query = query;
+        client.getImages(new JsonHttpResponseHandler(){
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 JSONArray resultsJson = null;
                 try {
                     resultsJson = response.getJSONObject("responseData").getJSONArray("results");
-                    images.clear(); // clear existing images from the array
-                    images.addAll(Image.fromJSONArray(resultsJson));
+                    adapter.clear(); // clear existing images from the array
+                    adapter.addAll(Image.fromJSONArray(resultsJson));
                     adapter.notifyDataSetChanged();
                 } catch (JSONException e) {
                     e.printStackTrace();

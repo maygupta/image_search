@@ -7,9 +7,6 @@
     <ImageView
         android:layout_width="75dp"
         android:layout_height="75dp"
-        android:scaleType="fitXY"
-        android:contentDescription="@string/image"
-        android:adjustViewBounds="true"
         android:id="@+id/ivImage" />
 
     <TextView

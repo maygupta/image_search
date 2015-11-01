@@ -20,6 +20,12 @@ import java.util.List;
  * Created by maygupta on 10/31/15.
  */
 public class ImagesAdapter extends ArrayAdapter<Image>{
+
+    private static class ViewHolder {
+        public ImageView ivImage;
+        public TextView tvTitle;
+    }
+
     public ImagesAdapter(Context context, List<Image> objects) {
         super(context, android.R.layout.simple_list_item_1, objects);
     }
@@ -27,17 +33,21 @@ public class ImagesAdapter extends ArrayAdapter<Image>{
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         Image image = getItem(position);
-
+        ViewHolder viewHolder; // view lookup cache stored in tag
         if (convertView == null) {
-            convertView = LayoutInflater.from(getContext()).inflate(R.layout.item_image, parent, false);
+            viewHolder = new ViewHolder();
+            LayoutInflater inflater = (LayoutInflater)getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            convertView = inflater.inflate(R.layout.item_image, parent, false);
+            viewHolder.ivImage = (ImageView) convertView.findViewById(R.id.ivImage);
+            viewHolder.tvTitle = (TextView) convertView.findViewById(R.id.tvImageTitle);
+            convertView.setTag(viewHolder);
+        } else {
+            viewHolder = (ViewHolder) convertView.getTag();
         }
 
-        ImageView ivImage = (ImageView) convertView.findViewById(R.id.ivImage);
-        TextView tvImageTitle = (TextView) convertView.findViewById(R.id.tvImageTitle);
-
-        tvImageTitle.setText(Html.fromHtml(image.title));
-        ivImage.setImageResource(android.R.color.transparent);
-        Picasso.with(getContext()).load(Uri.parse(image.thumbUrl)).into(ivImage);
+        viewHolder.tvTitle.setText(Html.fromHtml(image.title));
+        viewHolder.ivImage.setImageResource(0);
+        Picasso.with(getContext()).load(Uri.parse(image.thumbUrl)).into(viewHolder.ivImage);
 
         return convertView;
     }

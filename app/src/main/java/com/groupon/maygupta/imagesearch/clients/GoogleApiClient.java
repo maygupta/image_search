@@ -12,18 +12,24 @@ import java.net.URLEncoder;
 public class GoogleApiClient {
 
     private AsyncHttpClient client;
-    private static final String GOOGLE_IMAGEs_GET_URL = "https://ajax.googleapis.com/ajax/services/search/images?v=1.0&rsz=8&q=";
+    public int page;
+    public int IMAGES_PER_PAGE = 8;
+    public String query;
+    private static final String GOOGLE_IMAGEs_GET_URL = "https://ajax.googleapis.com/ajax/services/search/images?v=1.0&q=";
 
     public GoogleApiClient() {
         client = new AsyncHttpClient();
+        page = 1;
     }
 
-    public void getImages(final String query, JsonHttpResponseHandler handler) {
+    public void getImages(JsonHttpResponseHandler handler) {
         try {
-            client.get(GOOGLE_IMAGEs_GET_URL + URLEncoder.encode(query, "utf-8"), handler);
+            String url = GOOGLE_IMAGEs_GET_URL + URLEncoder.encode(query, "utf-8");
+            url += "&rsz=" + String.valueOf(IMAGES_PER_PAGE);
+            url += "&start=" + String.valueOf((page-1) * IMAGES_PER_PAGE);
+            client.get(url, handler);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-
     }
 }
