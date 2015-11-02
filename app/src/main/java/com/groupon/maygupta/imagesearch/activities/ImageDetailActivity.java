@@ -16,6 +16,7 @@ import android.widget.ImageView;
 
 import com.groupon.maygupta.imagesearch.R;
 import com.groupon.maygupta.imagesearch.models.Image;
+import com.groupon.maygupta.imagesearch.utils.TouchImageView;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
@@ -35,7 +36,7 @@ public class ImageDetailActivity extends ActionBarActivity {
         // get serializable image from Intent
         Image image = (Image) getIntent().getSerializableExtra("image");
 
-        ImageView ivFullImage = (ImageView) findViewById(R.id.ivFullImage);
+        TouchImageView ivFullImage = (TouchImageView) findViewById(R.id.ivFullImage);
         Picasso.with(this).load(Uri.parse(image.fullUrl)).into(ivFullImage, new Callback() {
             @Override
             public void onSuccess() {
@@ -80,7 +81,7 @@ public class ImageDetailActivity extends ActionBarActivity {
 
     public void setupShareIntent() {
         // Fetch Bitmap Uri locally
-        ImageView ivImage = (ImageView) findViewById(R.id.ivFullImage);
+        TouchImageView ivImage = (TouchImageView) findViewById(R.id.ivFullImage);
         Uri bmpUri = getLocalBitmapUri(ivImage); // see previous remote images section
         // Create share intent as described above
         Intent shareIntent = new Intent();
