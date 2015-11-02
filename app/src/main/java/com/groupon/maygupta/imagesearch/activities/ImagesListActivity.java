@@ -138,7 +138,7 @@ public class ImagesListActivity extends ActionBarActivity {
     public void fetchImages(String query) {
 
         if (isNetworkAvailable() == false) {
-            Toast.makeText(this, "Network not available!!", Toast.LENGTH_LONG);
+            Toast.makeText(this, "Network not available!!", Toast.LENGTH_LONG).show();
             return;
         }
 
